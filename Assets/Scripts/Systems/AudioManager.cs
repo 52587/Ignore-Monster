@@ -85,9 +85,49 @@ public class AudioManager : MonoBehaviour
 
     private void Update()
     {
+        // Stop all sounds during menus or game over
+        if (GameManager.Instance != null && (GameManager.Instance.IsGameOver() || Time.timeScale == 0f))
+        {
+            PauseAllAudio();
+            return;
+        }
+        
+        ResumeAllAudio();
         UpdateMonsterProximity();
         UpdateHeartbeat();
         UpdateChaseMusic();
+    }
+
+    private void PauseAllAudio()
+    {
+        if (heartbeatSource != null && heartbeatSource.isPlaying)
+        {
+            heartbeatSource.Pause();
+        }
+        if (ambientSource != null && ambientSource.isPlaying)
+        {
+            ambientSource.Pause();
+        }
+        if (sfxSource != null && sfxSource.isPlaying)
+        {
+            sfxSource.Pause();
+        }
+    }
+
+    private void ResumeAllAudio()
+    {
+        if (heartbeatSource != null && !heartbeatSource.isPlaying && heartbeatSource.clip != null)
+        {
+            heartbeatSource.UnPause();
+        }
+        if (ambientSource != null && !ambientSource.isPlaying && ambientSource.clip != null)
+        {
+            ambientSource.UnPause();
+        }
+        if (sfxSource != null && !sfxSource.isPlaying && sfxSource.clip != null)
+        {
+            sfxSource.UnPause();
+        }
     }
 
     private void UpdateMonsterProximity()
@@ -113,8 +153,8 @@ public class AudioManager : MonoBehaviour
     {
         if (heartbeatSource == null || fearMeter == null) return;
 
-        // Heartbeat volume increases with fear
-        float fearLevel = fearMeter.GetFearPercentage();
+        // Heartbeat volume increases with fear (0-100% converted to 0-1)
+        float fearLevel = fearMeter.GetFearPercentage() / 100f;
         float targetVolume = Mathf.Lerp(0f, maxHeartbeatVolume, fearLevel);
 
         // Also increase with monster proximity
@@ -126,15 +166,16 @@ public class AudioManager : MonoBehaviour
 
         heartbeatSource.volume = Mathf.Lerp(heartbeatSource.volume, targetVolume, Time.deltaTime * 2f);
 
-        // Speed up heartbeat when panicking
-        if (fearMeter.IsPanicking())
+        // Speed up heartbeat pitch based on fear level (faster = higher pitch)
+        float targetPitch = Mathf.Lerp(0.8f, 1.5f, fearLevel);
+        
+        // Extra speed boost when panicking
+        if (fearMeter.IsPanicking)
         {
-            heartbeatSource.pitch = Mathf.Lerp(heartbeatSource.pitch, 1.3f, Time.deltaTime * 2f);
+            targetPitch = Mathf.Lerp(targetPitch, 1.8f, 0.5f);
         }
-        else
-        {
-            heartbeatSource.pitch = Mathf.Lerp(heartbeatSource.pitch, 1f, Time.deltaTime);
-        }
+        
+        heartbeatSource.pitch = Mathf.Lerp(heartbeatSource.pitch, targetPitch, Time.deltaTime * 3f);
     }
 
     private void UpdateChaseMusic()

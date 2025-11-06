@@ -132,8 +132,8 @@ public class DebugHelper : MonoBehaviour
         if (fearMeter != null)
         {
             GUILayout.Label($"Fear: {fearMeter.GetCurrentFear():F1}/100");
-            GUILayout.Label($"Fear %: {fearMeter.GetFearPercentage() * 100:F0}%");
-            GUILayout.Label($"Panicking: {fearMeter.IsPanicking()}");
+            GUILayout.Label($"Fear %: {fearMeter.GetFearPercentage():F0}%");
+            GUILayout.Label($"Panicking: {fearMeter.IsPanicking}");
         }
 
         if (flashlight != null)

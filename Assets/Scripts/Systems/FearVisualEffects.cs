@@ -62,7 +62,7 @@ public class FearVisualEffects : MonoBehaviour
         // Chromatic aberration for panic state
         if (chromaticAberration != null)
         {
-            if (fearMeter.IsPanicking())
+            if (fearMeter.IsPanicking)
             {
                 chromaticAberration.intensity.value = Mathf.Lerp(
                     chromaticAberration.intensity.value,

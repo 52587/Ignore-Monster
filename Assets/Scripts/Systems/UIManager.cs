@@ -68,25 +68,26 @@ public class UIManager : MonoBehaviour
         if (fearMeter != null)
         {
             float fearPercent = fearMeter.GetFearPercentage();
+            float fearNormalized = fearPercent / 100f; // Convert 0-100 to 0-1
             
             if (fearMeterFill != null)
             {
-                fearMeterFill.fillAmount = fearPercent;
+                fearMeterFill.fillAmount = fearNormalized;
 
                 // Change color based on fear level
-                if (fearPercent < 0.5f)
+                if (fearNormalized < 0.5f)
                 {
-                    fearMeterFill.color = Color.Lerp(normalFearColor, highFearColor, fearPercent * 2f);
+                    fearMeterFill.color = Color.Lerp(normalFearColor, highFearColor, fearNormalized * 2f);
                 }
                 else
                 {
-                    fearMeterFill.color = Color.Lerp(highFearColor, panicFearColor, (fearPercent - 0.5f) * 2f);
+                    fearMeterFill.color = Color.Lerp(highFearColor, panicFearColor, (fearNormalized - 0.5f) * 2f);
                 }
             }
 
             if (fearText != null)
             {
-                fearText.text = $"Fear: {Mathf.RoundToInt(fearPercent * 100)}%";
+                fearText.text = $"Fear: {Mathf.RoundToInt(fearPercent)}%";
             }
         }
 
@@ -147,6 +148,12 @@ public class UIManager : MonoBehaviour
         {
             pauseMenuPanel.SetActive(true);
         }
+        
+        // Also show instructions when paused
+        if (instructionsPanel != null)
+        {
+            instructionsPanel.SetActive(true);
+        }
     }
 
     public void HidePauseMenu()
@@ -154,6 +161,12 @@ public class UIManager : MonoBehaviour
         if (pauseMenuPanel != null)
         {
             pauseMenuPanel.SetActive(false);
+        }
+        
+        // Hide instructions when unpausing
+        if (instructionsPanel != null)
+        {
+            instructionsPanel.SetActive(false);
         }
     }
 

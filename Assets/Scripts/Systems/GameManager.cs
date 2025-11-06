@@ -60,7 +60,24 @@ public class GameManager : MonoBehaviour
         isGameOver = true;
         hasWon = false;
 
-        Debug.Log("Game Over - Player was caught!");
+        Debug.Log("Game Over - Player was caught by monster!");
+        
+        if (uiManager != null)
+        {
+            uiManager.ShowGameOver(false);
+        }
+
+        Time.timeScale = 0f;
+    }
+
+    public void OnPlayerDiedFromFear()
+    {
+        if (isGameOver) return;
+
+        isGameOver = true;
+        hasWon = false;
+
+        Debug.Log("Game Over - Player died from fear!");
         
         if (uiManager != null)
         {
